@@ -10,16 +10,17 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+
 import web.repositories.RoleRepository;
 import web.repositories.UserRepository;
 import web.model.User;
 
-import javax.annotation.PostConstruct;
+
 import javax.persistence.EntityManager;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
+
 
 
 @Service
@@ -32,17 +33,6 @@ public class UserService implements UserDetailsService {
     RoleRepository roleRepository;
     @Autowired
     PasswordEncoder bCryptPasswordEncoder;
-
-
-    @PostConstruct
-    public void createAdmin() {
-        User admin = new User(null, "admin", bCryptPasswordEncoder.encode("123"), "admin@mail.ru",
-                Collections.singleton(roleRepository.findByRole("ROLE_ADMIN")));
-        if (userRepository.findByUsername("admin") == null) {
-            userRepository.save(admin);
-        }
-
-    }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -65,7 +55,6 @@ public class UserService implements UserDetailsService {
         if (userFromDB != null) {
             return false;
         }
-
 
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         userRepository.save(user);
